@@ -40,8 +40,9 @@ install_license LICENSE.MPLAPACK
 
 platforms = supported_platforms()
 platforms = expand_cxxstring_abis(platforms)
-# MPLAPACK's mplapackint is int64_t, which is long long on 32-bit targets; gmpxx cannot convert it to mpf_class.
-filter!(p -> nbits(p) == 64, platforms)
+# Outside Windows, MPLAPACK's mplapackint is int64_t, which is long long on 32-bit targets;
+# gmpxx cannot convert that to mpf_class. On Windows MPLAPACK uses long instead.
+filter!(p -> nbits(p) == 64 || Sys.iswindows(p), platforms)
 
 products = [
     ExecutableProduct("sdpa_gmp", :sdpa_gmp),
